@@ -1,0 +1,6 @@
+Archive: stable
+Component: main
+Origin: Conduit
+Label: Conduit
+Architecture: amd64
+Description: Conduit APT repository

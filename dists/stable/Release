@@ -1,0 +1,20 @@
+Origin: Conduit
+Label: Conduit
+Suite: stable
+Codename: stable
+Date: Tue, 11 Aug 2026 19:03:32 UTC
+Architectures: amd64
+Components: main
+Description: Conduit APT repository
+MD5Sum:
+ 7f46e9b9be6b7c5fe492fc1f2b185495 451 main/binary-amd64/Packages
+ 0d8bde0a5632b1e6ffafe12a2f181f03 349 main/binary-amd64/Packages.gz
+ e161e5744d579d03fb4e5762c529fdef 119 main/binary-amd64/Release
+SHA1:
+ f94826f62359b4a783255bf480865474154cdef2 451 main/binary-amd64/Packages
+ 0b1d6ada846e362334d96c86c3a34424c77d3fe2 349 main/binary-amd64/Packages.gz
+ cef735ef4b7d70571a7d0b844761142135e4c9b2 119 main/binary-amd64/Release
+SHA256:
+ aac5cb1ca702ad88384fbfc35ed65f54fc1656ca65393279fef97e01dfd35491 451 main/binary-amd64/Packages
+ fec1f829f9fb286fe4f50a167b73dc81fc445b1ef0cce5c4f43e7fed4c9b90c6 349 main/binary-amd64/Packages.gz
+ f6200f2484aa53d39671325c72f93708fe4bb712eb67d539b4afdc21b89c1044 119 main/binary-amd64/Release
