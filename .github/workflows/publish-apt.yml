@@ -70,8 +70,13 @@ jobs:
         run: |
           set -euo pipefail
           for d in incoming/*.deb; do
-            # includedeb is idempotent per (name,version); re-adding same version is a no-op.
-            reprepro -b . includedeb stable "$d" || true
+            # Tauri debs omit Section/Priority, which reprepro requires — supply
+            # them here. remove-then-add keeps the repo at the latest version and
+            # makes re-runs idempotent (remove is a no-op if absent).
+            pkg=$(dpkg-deb -f "$d" Package)
+            echo "Adding package '$pkg' from $d"
+            reprepro -b . remove stable "$pkg" 2>/dev/null || true
+            reprepro -b . --section net --priority optional includedeb stable "$d"
           done
 
       - name: Assemble Pages tree
