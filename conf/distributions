@@ -1,0 +1,8 @@
+Origin: Conduit
+Label: Conduit
+Codename: stable
+Suite: stable
+Architectures: amd64
+Components: main
+Description: Conduit APT repository
+SignWith: __KEYID__

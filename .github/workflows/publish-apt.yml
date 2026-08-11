@@ -1,0 +1,114 @@
+name: Publish APT
+
+# Pulls the latest published Conduit .deb from the ssh-client releases, adds it
+# to this reprepro repo, GPG-signs the indexes, and serves the tree on Pages.
+# Trigger manually (workflow_dispatch) or via repository_dispatch from the app's
+# release pipeline. The release must be PUBLISHED (not a draft) — draft assets
+# aren't readable cross-repo.
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [new-release]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: apt-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install reprepro
+        run: sudo apt-get update && sudo apt-get install -y reprepro
+
+      - name: Import + unlock signing key
+        env:
+          KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          PASS: ${{ secrets.APT_GPG_PASSPHRASE }}
+          KEYID: ${{ secrets.APT_GPG_KEYID }}
+        run: |
+          set -euo pipefail
+          GNUPGHOME="$(mktemp -d)"; export GNUPGHOME
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+          chmod 700 "$GNUPGHOME"
+          printf 'allow-loopback-pinentry\nallow-preset-passphrase\n' > "$GNUPGHOME/gpg-agent.conf"
+          printf 'pinentry-mode loopback\nbatch\n' > "$GNUPGHOME/gpg.conf"
+          printf '%s' "$KEY" | gpg --batch --import
+          gpg-connect-agent reloadagent /bye
+          # Preset the passphrase so reprepro (via gpgme/agent) can sign headless.
+          if [ -n "${PASS:-}" ]; then
+            KEYGRIP=$(gpg --batch --with-keygrip --list-secret-keys "$KEYID" | awk '/Keygrip/{print $3; exit}')
+            PRESET=$(find /usr/lib* /usr/libexec -name gpg-preset-passphrase 2>/dev/null | head -1)
+            "$PRESET" --preset --passphrase "$PASS" "$KEYGRIP"
+          fi
+
+      - name: Inject key id into reprepro config
+        env:
+          KEYID: ${{ secrets.APT_GPG_KEYID }}
+        run: sed -i "s/__KEYID__/${KEYID}/" conf/distributions
+
+      - name: Fetch latest published .deb
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p incoming
+          gh release download --repo MJNakum/ssh-client \
+            --pattern '*_amd64.deb' --dir incoming --clobber
+          ls -la incoming
+
+      - name: Add package(s) to the repo
+        run: |
+          set -euo pipefail
+          for d in incoming/*.deb; do
+            # includedeb is idempotent per (name,version); re-adding same version is a no-op.
+            reprepro -b . includedeb stable "$d" || true
+          done
+
+      - name: Assemble Pages tree
+        env:
+          KEYID: ${{ secrets.APT_GPG_KEYID }}
+        run: |
+          set -euo pipefail
+          gpg --batch --armor --export "$KEYID" > pubkey.asc
+          rm -rf public && mkdir -p public
+          cp -r dists pool public/
+          cp pubkey.asc public/
+          cat > public/index.html <<'EOF'
+          <!doctype html><meta charset="utf-8"><title>Conduit APT</title>
+          <style>body{font:14px/1.5 system-ui;max-width:720px;margin:40px auto;padding:0 16px}pre{background:#f4f4f5;padding:12px;border-radius:8px;overflow:auto}</style>
+          <h1>Conduit APT repository</h1>
+          <p>Install Conduit on Debian/Ubuntu:</p>
+          <pre>curl -fsSL https://mjnakum.github.io/conduit-apt/pubkey.asc | sudo gpg --dearmor -o /usr/share/keyrings/conduit.gpg
+          echo "deb [signed-by=/usr/share/keyrings/conduit.gpg] https://mjnakum.github.io/conduit-apt stable main" | sudo tee /etc/apt/sources.list.d/conduit.list
+          sudo apt update && sudo apt install conduit</pre>
+          EOF
+
+      - name: Persist repo state
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Note: conf/distributions is intentionally NOT staged — its working-tree
+          # copy holds the injected KEYID; the committed copy keeps the __KEYID__
+          # placeholder. Each run re-injects on a fresh checkout.
+          git add dists pool db pubkey.asc 2>/dev/null || true
+          git commit -m "apt: publish $(date -u +%FT%TZ)" || echo "nothing to commit"
+          git push
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
