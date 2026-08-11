@@ -1,6 +1,6 @@
 name: Publish APT
 
-# Pulls the latest published Conduit .deb from the ssh-client releases, adds it
+# Pulls the latest published Conduit .deb from the conduit releases, adds it
 # to this reprepro repo, GPG-signs the indexes, and serves the tree on Pages.
 # Trigger manually (workflow_dispatch) or via repository_dispatch from the app's
 # release pipeline. The release must be PUBLISHED (not a draft) — draft assets
@@ -62,7 +62,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p incoming
-          gh release download --repo MJNakum/ssh-client \
+          gh release download --repo MJNakum/conduit \
             --pattern '*_amd64.deb' --dir incoming --clobber
           ls -la incoming
 
