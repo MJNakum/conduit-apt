@@ -2,19 +2,19 @@ Origin: Conduit
 Label: Conduit
 Suite: stable
 Codename: stable
-Date: Tue, 11 Aug 2026 19:03:32 UTC
+Date: Wed, 12 Aug 2026 12:06:07 UTC
 Architectures: amd64
 Components: main
 Description: Conduit APT repository
 MD5Sum:
- 7f46e9b9be6b7c5fe492fc1f2b185495 451 main/binary-amd64/Packages
- 0d8bde0a5632b1e6ffafe12a2f181f03 349 main/binary-amd64/Packages.gz
+ f107f22447e7c5836681e45161e04ff1 451 main/binary-amd64/Packages
+ 6c82d16dbb8e0e083e3a4bb5157c3e5a 348 main/binary-amd64/Packages.gz
  e161e5744d579d03fb4e5762c529fdef 119 main/binary-amd64/Release
 SHA1:
- f94826f62359b4a783255bf480865474154cdef2 451 main/binary-amd64/Packages
- 0b1d6ada846e362334d96c86c3a34424c77d3fe2 349 main/binary-amd64/Packages.gz
+ f0bd33a17a389829c98299d6bbf94be567a8e829 451 main/binary-amd64/Packages
+ ba168f394820ac265189c961d80f6da9fd7fa140 348 main/binary-amd64/Packages.gz
  cef735ef4b7d70571a7d0b844761142135e4c9b2 119 main/binary-amd64/Release
 SHA256:
- aac5cb1ca702ad88384fbfc35ed65f54fc1656ca65393279fef97e01dfd35491 451 main/binary-amd64/Packages
- fec1f829f9fb286fe4f50a167b73dc81fc445b1ef0cce5c4f43e7fed4c9b90c6 349 main/binary-amd64/Packages.gz
+ 6201b75995ac19e1e4e2cde743ed502e24852bd398a384e4c17914d9469fc518 451 main/binary-amd64/Packages
+ 608c9c8e4e3402deb1055899ccf3b8b3220fbf94d7b1a1f3cae82507598698f7 348 main/binary-amd64/Packages.gz
  f6200f2484aa53d39671325c72f93708fe4bb712eb67d539b4afdc21b89c1044 119 main/binary-amd64/Release
