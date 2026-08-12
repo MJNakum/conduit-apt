@@ -1,16 +1,16 @@
 Package: conduit
-Version: 0.3.0
+Version: 0.4.0
 Architecture: amd64
-Installed-Size: 22022
+Installed-Size: 23243
 Maintainer: Meet Nakum
 Depends: libwebkit2gtk-4.1-0, libgtk-3-0
 Priority: optional
 Section: net
-Filename: pool/main/c/conduit/conduit_0.3.0_amd64.deb
-Size: 6770362
-SHA256: 2862f446ee1985d15540768d8d95c336d6ac44d3b37724de8b7f15acc532d790
-SHA1: 8d5706911a3c31f132fb386d7eba6a1874624984
-MD5sum: 207949ec11d8cf3f7f33640237ebdf2c
+Filename: pool/main/c/conduit/conduit_0.4.0_amd64.deb
+Size: 7073278
+SHA256: 8cd378dae8dfbbc950c0556eccfeb5cc4b4205100240f0cf7f0a3b14ed7da3d9
+SHA1: 826bd7909d66b1cc0998813b1e12c19f80c251fb
+MD5sum: 60958cce391ebfbf624227e7f5b6a847
 Description: Modern local-first SSH client
  (none)
 
